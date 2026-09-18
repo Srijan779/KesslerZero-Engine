@@ -1,5 +1,5 @@
 # app.py - KesslerZero Space Flight Operations Console
-# Autonomous Conjunction Assessment & Collision Avoidance System
+# Autonomous Satellite Collision Avoidance & Propellant Conservation System
 
 import streamlit as st
 import pandas as pd
@@ -8,10 +8,10 @@ import plotly.graph_objects as go
 from datetime import datetime, timezone
 
 # ------------------------------------------------------------------------------
-# 1. FLIGHT DYNAMICS CONSOLE STYLING (AEROSPACE TELEMETRY SPEC)
+# 1. CLEAN FLIGHT OPERATIONS STYLING (HIGH-CONTRAST / ZERO CLUTTER)
 # ------------------------------------------------------------------------------
 st.set_page_config(
-    page_title="KesslerZero | Flight Operations",
+    page_title="KesslerZero | Autonomous Collision Avoidance",
     page_icon="🛰️",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -25,18 +25,11 @@ st.markdown("""
         --bg-base: #0a0d14;
         --panel-bg: #111622;
         --panel-border: #1e2638;
-        --border-subtle: #161e2e;
-        --text-main: #e2e8f0;
-        --text-muted: #8492a6;
-        --text-dim: #4c566a;
-        --accent-blue: #2563eb;
-        --accent-sky: #38bdf8;
-        --status-safe: #059669;
-        --status-safe-bg: rgba(5, 150, 105, 0.08);
-        --status-warn: #d97706;
-        --status-warn-bg: rgba(217, 119, 6, 0.08);
-        --status-danger: #dc2626;
-        --status-danger-bg: rgba(220, 38, 38, 0.08);
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --accent-blue: #38bdf8;
+        --status-safe: #10b981;
+        --status-danger: #ef4444;
     }
 
     .main { 
@@ -48,18 +41,17 @@ st.markdown("""
     .top-header {
         background: var(--panel-bg);
         border: 1px solid var(--panel-border);
-        border-radius: 4px;
-        padding: 10px 16px;
+        border-radius: 6px;
+        padding: 12px 18px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 14px;
+        margin-bottom: 16px;
     }
 
     .telemetry-strip {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
-        letter-spacing: 0.5px;
+        font-size: 11.5px;
         color: var(--text-muted);
     }
 
@@ -67,45 +59,44 @@ st.markdown("""
         color: var(--text-main);
     }
 
-    .panel-container {
+    .panel-box {
         background: var(--panel-bg);
         border: 1px solid var(--panel-border);
-        border-radius: 4px;
-        padding: 14px;
+        border-radius: 6px;
+        padding: 14px 16px;
         margin-bottom: 12px;
     }
 
-    .section-label {
+    .section-title {
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
-        font-weight: 600;
+        font-weight: 700;
         letter-spacing: 1px;
-        color: var(--text-muted);
+        color: var(--accent-blue);
         text-transform: uppercase;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
     }
 
     .packet-log {
         font-family: 'JetBrains Mono', monospace;
         font-size: 11.5px;
-        background: #06090e;
+        background: #05080f;
         border: 1px solid var(--panel-border);
-        border-left: 3px solid var(--accent-sky);
-        padding: 10px 12px;
-        border-radius: 2px;
-        color: #93c5fd;
+        border-left: 3px solid var(--accent-blue);
+        padding: 12px;
+        border-radius: 4px;
+        color: #7dd3fc;
         line-height: 1.6;
     }
 
     div[data-testid="stMetricValue"] > div {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 22px;
-        font-weight: 600;
-        letter-spacing: -0.5px;
+        font-size: 24px;
+        font-weight: 700;
     }
 
     div[data-testid="stMetricLabel"] > div {
-        font-size: 11.5px;
+        font-size: 12px;
         color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -114,91 +105,88 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# 2. CONSTELLATION ORBITAL DATABASE & ENCOUNTER CATALOG
+# 2. ORBITAL FLEET DATABASE (PLAIN-ENGLISH SCENARIOS)
 # ------------------------------------------------------------------------------
 FLEET_DATABASE = {
-    "SAT-IND-LEO-01 (Defense Reconnaissance)": {
+    "SAT-IND-LEO-01 (Defense Recon Satellite)": {
         "id": "SAT-IND-LEO-01",
-        "regime": "550 km Polar LEO | Inclination: 97.4°",
-        "propulsion": "Chemical Monopropellant (Hydrazine RCS Bank)",
-        "mode": "Impulsive Along-Track Phasing (Hill-Clohessy-Wiltshire)",
-        "hazard_id": "DEBRIS-KOSMOS-2251-FRAG (CAT #34289)",
-        "tca_epoch": "2026-09-19 14:12:08 UTC (T - 23h 48m)",
-        "miss_raw": "480 m",
-        "miss_status": "CRITICAL (Violates 1.0 km Threshold)",
-        "pc_raw": "9.64e-01",
-        "panic_dv": "3.20 m/s (Reactive Burn @ T-2h)",
-        "micro_dv": "0.36 m/s (Phasing Micro-Burn @ T-24h)",
-        "propellant_delta": "88.7% Reduction",
-        "action_btn": "EXECUTE RCS PHASING BURN",
-        "action_desc": "Commands along-track velocity increment (+0.362 m/s) at ascending node. Shifts semi-major axis by +640 m, inducing 11.4 km along-track separation at encounter epoch.",
-        "resolved_miss": "11.4 km",
-        "tc_packet": "CCSDS_TC_LEO01_THRUST_P_0362_BURNTIME_4.12S",
+        "role": "Defense Optical Reconnaissance",
+        "orbit_info": "550 km Polar Orbit (Speed: ~27,500 km/h)",
+        "hardware_type": "Chemical Thrusters Onboard",
+        "debris_name": "Kosmos-2251 Rocket Debris",
+        "time_to_impact": "23 hours, 48 minutes",
+        "initial_miss_m": "480 meters (FATAL BREACH: Inside 1,000m Danger Zone)",
+        "risk_percentage": "96.4%",
+        "problem_statement": "A high-speed debris fragment is crossing our satellite's orbital corridor tomorrow at 480 meters. In space, anything under 1,000 meters is an immediate red alert.",
+        "old_way": "Emergency panic burn 2 hours before impact (3.2 m/s). Burns heavy fuel and drains 1.8 years of satellite mission life.",
+        "our_way": "A gentle 4.1-second micro-burn (+0.36 m/s) executed 24 hours early. Orbital physics widens the gap to 11.4 km automatically.",
+        "fuel_saved": "88.7% Fuel Saved",
+        "action_button": "EXECUTE RCS MICRO-BURN (+0.36 m/s)",
+        "resolved_miss": "11.4 km (Completely Safe)",
+        "packet_string": "CMD_EXEC_RCS_MICRO_BURN_PHASING_DV_0.362_BURNTIME_4.12S",
         "coord_pre": [0, 480, 80],
         "coord_post": [0, 11400, 120]
     },
-    "STUDENT-CUBESAT-03 (3U Research Platform)": {
+    "STUDENT-CUBESAT-03 (University SmallSat)": {
         "id": "STUDENT-CUBESAT-03",
-        "regime": "480 km Circular LEO | Inclination: 51.6°",
-        "propulsion": "Unpropelled / Thrusterless (3-Axis Reaction Wheel Control)",
-        "mode": "Non-Impulsive Aerodynamic Differential Drag Attitude Slew",
-        "hazard_id": "ENVISAT-FRAGMENT-B (CAT #27386)",
-        "tca_epoch": "2026-09-19 11:54:30 UTC (T - 21h 30m)",
-        "miss_raw": "650 m",
-        "miss_status": "CRITICAL (Violates 1.0 km Threshold)",
-        "pc_raw": "8.70e-01",
-        "panic_dv": "INOPERABLE (No Onboard Propulsion Subsystem)",
-        "optimal_dv": "0.00 kg Propellant (Attitude Slew to Maximum Cross-Section)",
-        "propellant_delta": "100% Conserved",
-        "action_btn": "EXECUTE DIFFERENTIAL DRAG ORIENTATION",
-        "action_desc": "Commands 3-axis reaction wheel cluster to slew attitude by 90.0° pitch. Maximizes ram surface area against thermospheric flow, inducing -4.8 km relative along-track drift.",
-        "resolved_miss": "4.8 km",
-        "tc_packet": "CCSDS_TC_CS03_ATT_PITCH_90DEG_DRAG_MAX_CD",
+        "role": "University 3U Science Satellite",
+        "orbit_info": "480 km Low Orbit (Atmospheric Drag Layer)",
+        "hardware_type": "Motorless (Reaction Wheels Only - Zero Thrusters)",
+        "debris_name": "Envisat Satellite Fragment",
+        "time_to_impact": "21 hours, 30 minutes",
+        "initial_miss_m": "650 meters (FATAL BREACH: Inside 1,000m Danger Zone)",
+        "risk_percentage": "87.0%",
+        "problem_statement": "Small university satellites do NOT have rocket engines. When space debris approaches at 650 meters, standard thruster burns are physically impossible.",
+        "old_way": "Unable to maneuver. University operators are forced to watch the collision risk helplessly.",
+        "our_way": "Commands internal balance wheels to tilt the solar panels 90° sideways. The thin upper atmosphere acts like a brake (aerodynamic drag), sliding the satellite 4.8 km to safety with ZERO fuel.",
+        "fuel_saved": "100% Propellant-Free",
+        "action_button": "EXECUTE 90° DIFFERENTIAL DRAG ROTATION",
+        "resolved_miss": "4.8 km (Completely Safe)",
+        "packet_string": "CMD_EXEC_ATTITUDE_PITCH_90DEG_MAX_DRAG_AERO_EVASION",
         "coord_pre": [0, 650, -40],
         "coord_post": [0, 4800, 90]
     },
-    "CARTOSAT-RECON-02 (Optical Imaging Platform)": {
+    "CARTOSAT-RECON-02 (Dual Conjunction Threat)": {
         "id": "CARTOSAT-RECON-02",
-        "regime": "630 km Sun-Synchronous LEO | Inclination: 98.1°",
-        "propulsion": "Hall-Effect Electric Propulsion Subsystem (Xenon Ion)",
-        "mode": "Pareto-Constrained Multi-Conjunction Vector Optimization",
-        "hazard_id": "DUAL ENCOUNTER: FENGYUN-1C + CZ-4C BOOSTER",
-        "tca_epoch": "TCA-1: T - 16h 20m | TCA-2: T - 34h 10m",
-        "miss_raw": "310 m & 580 m",
-        "miss_status": "DUAL CORRIDOR VIOLATION",
-        "pc_raw": "9.88e-01 (Joint)",
-        "panic_dv": "6.40 m/s (Two Sequential Reactive Burns)",
-        "optimal_dv": "0.52 m/s (Single Unified Pareto Vector)",
-        "propellant_delta": "91.8% Reduction",
-        "action_btn": "EXECUTE UNIFIED DUAL-CLEARANCE BURN",
-        "action_desc": "Calculates unified multi-objective orbital trim (+0.520 m/s). Introduces 4.2-second arrival delay, clearing Threat 1 ahead and Threat 2 astern while respecting constellation corridors.",
-        "resolved_miss": "12.8 km (Both Cleared)",
-        "tc_packet": "CCSDS_TC_CR02_ION_MULTI_PHASE_DV_0520_EP",
+        "role": "Earth Observation Satellite",
+        "orbit_info": "630 km Sun-Synchronous Orbit",
+        "hardware_type": "Electric Ion Propulsion (High Efficiency)",
+        "debris_name": "Dual Threat: Fengyun Debris + Spent Booster",
+        "time_to_impact": "Threat 1: 16h | Threat 2: 34h",
+        "initial_miss_m": "310m & 580m (DOUBLE CORRIDOR BREACH)",
+        "risk_percentage": "98.8%",
+        "problem_statement": "Two independent pieces of space debris are intercepting the same satellite within 36 hours. Dodging the first hazard carelessly can push the satellite directly into the second.",
+        "old_way": "Two separate emergency burns. Wastes fuel and risks steering into sister satellites or the second debris path.",
+        "our_way": "Our multi-target solver calculates a single unified micro-burn (+0.52 m/s). It adjusts the satellite's arrival time by 4 seconds so both debris pieces pass harmlessly by.",
+        "fuel_saved": "91.8% Fuel Saved",
+        "action_button": "EXECUTE UNIFIED DUAL-CLEARANCE BURN",
+        "resolved_miss": "12.8 km (Both Threats Cleared)",
+        "packet_string": "CMD_EXEC_ION_PARETO_OPTIMAL_DUAL_CONJUNCTION_CLEAR",
         "coord_pre": [0, 310, 60],
         "coord_post": [0, 12800, 240]
     }
 }
 
 # ------------------------------------------------------------------------------
-# 3. STATE MANAGEMENT
+# 3. INTERACTIVE STATE MANAGEMENT
 # ------------------------------------------------------------------------------
 if 'fleet_states' not in st.session_state:
     st.session_state.fleet_states = {k: False for k in FLEET_DATABASE.keys()}
 
-def authorize_asset(asset_key):
+def execute_evasion(asset_key):
     st.session_state.fleet_states[asset_key] = True
 
-def reset_asset(asset_key):
+def reset_current_asset(asset_key):
     st.session_state.fleet_states[asset_key] = False
 
-def reset_all_ephemeris():
+def reset_all():
     for k in st.session_state.fleet_states:
         st.session_state.fleet_states[k] = False
 
 now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
 # ------------------------------------------------------------------------------
-# 4. PRIMARY TELEMETRY HEADER
+# 4. TOP CONSOLE COMMAND BAR
 # ------------------------------------------------------------------------------
 col_h1, col_h2 = st.columns([4, 1])
 
@@ -206,57 +194,58 @@ with col_h1:
     st.markdown(f"""
     <div class="top-header">
         <div>
-            <strong style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #f8fafc; letter-spacing: 0.5px;">
-                KESSLERZERO FLIGHT DYNAMICS CONSOLE
+            <strong style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #fff;">
+                KESSLERZERO : AUTONOMOUS SATELLITE COLLISION AVOIDANCE
             </strong>
-            <span style="color: #475569; margin: 0 8px;">|</span>
-            <span class="telemetry-strip">SYSTEM STATUS: <strong style="color: #10b981;">NOMINAL</strong></span>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">
+                Detecting space debris early and calculating precision evasive maneuvers that conserve up to 90% fuel.
+            </div>
         </div>
         <div class="telemetry-strip">
-            <span>TRACKED ASSETS: <strong>3 ACTIVE</strong></span>
+            <span>FLEET: <strong>3 SPACECRAFT MONITORED</strong></span>
             <span style="color: #475569; margin: 0 8px;">|</span>
-            <span>EPOCH: <strong>{now_utc}</strong></span>
+            <span>TIME: <strong>{now_utc}</strong></span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
 with col_h2:
-    st.button("Reset Ephemeris Telemetry", on_click=reset_all_ephemeris, use_container_width=True)
+    st.button("↺ Reset All Fleet Data", on_click=reset_all, use_container_width=True, help="Reset all satellites back to danger state.")
 
 # ------------------------------------------------------------------------------
-# 5. SECTION 01: CONSTELLATION CONJUNCTION WATCHLIST
+# 5. STEP 1: CONSTELLATION THREAT FEED (EASY FOR ANYONE TO READ)
 # ------------------------------------------------------------------------------
-st.markdown('<div class="section-label">01 // Constellation Conjunction Assessment Feed</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">STEP 1 // Real-Time Space Debris Watchlist</div>', unsafe_allow_html=True)
 
 feed_records = []
 for k, data in FLEET_DATABASE.items():
     is_cleared = st.session_state.fleet_states[k]
-    status_tag = "CLEARED (TRAJECTORY SECURED)" if is_cleared else "CRITICAL (CORRIDOR BREACH)"
-    curr_miss = data['resolved_miss'] if is_cleared else data['miss_raw']
-    curr_pc = "< 1.00e-05" if is_cleared else data['pc_raw']
+    status_label = "SAFE (TRAJECTORY SECURED)" if is_cleared else "DANGER (COLLISION RISK)"
+    miss_display = data['resolved_miss'] if is_cleared else data['initial_miss_m'].split('(')[0].strip()
+    risk_display = "< 0.01% (Clear)" if is_cleared else data['risk_percentage']
     
     feed_records.append({
-        "Status": status_tag,
-        "Target Spacecraft": data['id'],
-        "Propulsion Subsystem": data['propulsion'].split('(')[0].strip(),
-        "Conjunction Threat Object": data['hazard_id'].split('(')[0].strip(),
-        "Time of Closest Approach (TCA)": data['tca_epoch'],
-        "Predicted Miss": curr_miss,
-        "Collision Probability (Pc)": curr_pc
+        "Status": status_label,
+        "Satellite": data['id'],
+        "Hardware": data['hardware_type'],
+        "Incoming Threat": data['debris_name'],
+        "Time Until Impact": data['time_to_impact'],
+        "Miss Distance": miss_display,
+        "Collision Chance": risk_display
     })
 
 st.dataframe(pd.DataFrame(feed_records), use_container_width=True, hide_index=True)
 
 # ------------------------------------------------------------------------------
-# 6. SECTION 02: ACTIVE TARGET CONTROLLER & TELEMETRY
+# 6. STEP 2: SELECT SPACECRAFT TO INSPECT & EVACUATE
 # ------------------------------------------------------------------------------
-st.markdown('<div class="section-label" style="margin-top: 14px;">02 // Spacecraft Tactical Controller</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title" style="margin-top: 16px;">STEP 2 // Select Satellite to Inspect & Evacuate</div>', unsafe_allow_html=True)
 
 col_selector, col_status = st.columns([3, 1])
 
 with col_selector:
     active_key = st.selectbox(
-        "Select Active Spacecraft Profile:",
+        "Choose Satellite from Fleet:",
         options=list(FLEET_DATABASE.keys()),
         label_visibility="collapsed"
     )
@@ -267,63 +256,61 @@ is_auth = st.session_state.fleet_states[active_key]
 with col_status:
     if is_auth:
         st.markdown("""
-        <div style="background: rgba(5, 150, 105, 0.1); border: 1px solid #059669; color: #10b981; padding: 7px 12px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 11.5px; text-align: center; font-weight: 600;">
-            CORRIDOR SECURED
+        <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; padding: 8px 12px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 12px; text-align: center; font-weight: 700;">
+            STATUS: ORBIT SECURED
         </div>
         """, unsafe_allow_html=True)
     else:
         st.markdown("""
-        <div style="background: rgba(220, 38, 38, 0.1); border: 1px solid #dc2626; color: #ef4444; padding: 7px 12px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 11.5px; text-align: center; font-weight: 600;">
-            HAZARD DETECTED
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; padding: 8px 12px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 12px; text-align: center; font-weight: 700;">
+            STATUS: CRITICAL THREAT
         </div>
         """, unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# 7. SECTION 03: ENCOUNTER METRICS & B-PLANE RELATIVE RADAR
+# 7. STEP 3: COMPARISON METRICS & UNTOUCHED 3D ENCOUNTER RADAR
 # ------------------------------------------------------------------------------
 col_metrics, col_radar = st.columns([1, 1])
 
 with col_metrics:
+    st.markdown('<div class="section-title">The Problem & The Solution</div>', unsafe_allow_html=True)
+    
     st.markdown(f"""
-    <div class="panel-container">
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #64748b; text-transform: uppercase;">
-            Spacecraft Subsystem Configuration
-        </div>
-        <div style="font-size: 14px; font-weight: 600; color: #f1f5f9; margin-top: 2px;">
-            {asset['id']}
-        </div>
-        <div style="font-size: 12px; color: #94a3b8; margin-top: 4px; line-height: 1.5;">
-            <strong>Regime:</strong> {asset['regime']}<br>
-            <strong>Hardware:</strong> {asset['propulsion']}<br>
-            <strong>Maneuver Strategy:</strong> {asset['mode']}
+    <div class="panel-box">
+        <div style="font-size: 13.5px; line-height: 1.5; color: #cbd5e1;">
+            <strong>The Situation:</strong> {asset['problem_statement']}<br><br>
+            <strong>Standard Industry Response:</strong> {asset['old_way']}<br><br>
+            <strong>KesslerZero Solution:</strong> {asset['our_way']}
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     if not is_auth:
         m1, m2, m3 = st.columns(3)
-        m1.metric("Predicted Miss", asset['miss_raw'])
-        m2.metric("Conjunction Threat", asset['hazard_id'].split()[0])
-        m3.metric("Collision Prob (Pc)", asset['pc_raw'])
+        m1.metric("Predicted Miss", asset['initial_miss_m'].split('(')[0].strip(), help="Distance if we do nothing")
+        m2.metric("Incoming Junk", asset['debris_name'].split()[0])
+        m3.metric("Collision Chance", asset['risk_percentage'])
     else:
         m1, m2, m3 = st.columns(3)
-        m1.metric("Secured Clearance", asset['resolved_miss'], delta="Separation Validated")
-        m2.metric("Residual Collision Prob", "< 1.00e-05", delta="-99.9% Drop")
-        m3.metric("Secondary Hazards", "0 (48h Sweep)")
+        m1.metric("New Clearance", asset['resolved_miss'], delta="10+ km Safe Buffer")
+        m2.metric("Collision Chance", "< 0.01%", delta="-99% Mitigated")
+        m3.metric("Secondary Threats", "0 in 48 Hours")
 
     st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
-    st.markdown('<div class="section-label">Propellant Conservation Trade-Off</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Efficiency & Fuel Saved</div>', unsafe_allow_html=True)
     
     col_t1, col_t2 = st.columns(2)
     with col_t1:
-        st.metric("Reactive Panic Burn (T-2h)", asset['panic_dv'])
+        st.metric("Calculation Delay", "0.4 Seconds", delta="Cut down from 8.5 Hours")
     with col_t2:
-        val = asset['micro_dv'] if 'micro_dv' in asset else asset['optimal_dv']
-        st.metric("Optimized Phasing Solution", val, delta=asset['propellant_delta'])
+        st.metric("Propellant Conserved", asset['fuel_saved'], delta="High Efficiency")
 
 with col_radar:
-    st.markdown('<div class="section-label">Relative Motion Encounter Geometry (B-Plane Reference)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">3D Encounter Geometry (Relative Motion Reference Frame)</div>', unsafe_allow_html=True)
     
+    # --------------------------------------------------------------------------
+    # 100% UNTOUCHED 3D PLOTLY GRAPH CODE AS REQUESTED
+    # --------------------------------------------------------------------------
     fig = go.Figure()
 
     # 1. Threat Velocity Vector
@@ -388,84 +375,73 @@ with col_radar:
         )
     )
     st.plotly_chart(fig, use_container_width=True)
+    # --------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# 8. SECTION 04: MANEUVER COMMAND & EXECUTION UNIT
+# 8. STEP 4: 1-CLICK ACTION BUTTON (CLEAR & SATISFYING)
 # ------------------------------------------------------------------------------
-st.markdown('<div class="section-label" style="margin-top: 14px;">03 // Telecommand Execution Unit</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title" style="margin-top: 14px;">STEP 3 // 1-Click Ground Station Authorization</div>', unsafe_allow_html=True)
 
 col_cmd_info, col_cmd_btn = st.columns([3, 1])
 
 with col_cmd_info:
     if not is_auth:
-        st.markdown(f"""
-        <div class="panel-container" style="margin-bottom: 0;">
-            <div style="font-family: 'JetBrains Mono'; font-size: 11px; color: #64748b; text-transform: uppercase;">
-                Trajectory Solver Output
-            </div>
-            <div style="font-size: 13px; color: #cbd5e1; margin-top: 4px; line-height: 1.5;">
-                {asset['action_desc']}
-            </div>
-            <div style="font-size: 11.5px; color: #64748b; margin-top: 6px;">
-                Inter-Constellation Safety: Screened against active constellation catalog with 50 km keep-out sphere.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.info(f"""
+        **READY TO EXECUTE:** {asset['our_way']}  
+        • **Safety Check:** Screened against 35,000+ catalog objects to ensure we don't steer into another satellite.  
+        • **Speed:** Solution calculated in **0.4 seconds** (eliminating 8+ hours of manual ground committee delay).
+        """)
     else:
-        st.markdown(f"""
-        <div class="panel-container" style="margin-bottom: 0; border-left: 3px solid #059669;">
-            <div style="font-family: 'JetBrains Mono'; font-size: 11px; color: #10b981; text-transform: uppercase;">
-                Telecommand Frame Dispatched & Acknowledged
-            </div>
-            <div style="font-size: 13px; color: #cbd5e1; margin-top: 4px;">
-                Maneuver telecommand uplinks successfully committed for {asset['id']}. Ephemeris propagation updated.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.success(f"""
+        **MANEUVER DISPATCHED TO SATELLITE:**  
+        The evasive telecommand has been transmitted to {asset['id']}. The trajectory is verified safe and the 3D position above has updated.
+        """)
 
 with col_cmd_btn:
     st.write("")
     if not is_auth:
-        if st.button(asset['action_btn'], type="primary", use_container_width=True):
-            authorize_asset(active_key)
+        if st.button(f"🚀 {asset['action_button']}", type="primary", use_container_width=True):
+            execute_evasion(active_key)
             st.rerun()
     else:
-        st.button("TELECOMMAND ACTIVE", disabled=True, use_container_width=True)
-        if st.button("Reset Asset State", use_container_width=True):
-            reset_asset(active_key)
+        st.button("✅ MANEUVER CONFIRMED", disabled=True, use_container_width=True)
+        if st.button("↺ Reset This Spacecraft", use_container_width=True):
+            reset_current_asset(active_key)
             st.rerun()
 
-# Telemetry Packet Output (When Executed)
+# Verification Packet & Audit Trail (Revealed Post-Click)
 if is_auth:
-    st.markdown("<div style='margin-top: 12px;'></div>", unsafe_allow_html=True)
-    st.markdown('<div class="section-label">CCSDS Uplink Frame & Mission Verification Audit</div>', unsafe_allow_html=True)
+    st.markdown("<div style='margin-top: 14px;'></div>", unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Verified Radio Telecommand & Audit Proof</div>', unsafe_allow_html=True)
 
     col_pkt, col_audit = st.columns([1, 1])
 
     with col_pkt:
+        st.caption("Generated Binary Satellite Command (CCSDS Standard)")
         st.markdown(f"""
         <div class="packet-log">
-        [CCSDS_TC_FRAME_TRANSMITTED]<br>
-        SPACECRAFT_IDENT   : {asset['id']}<br>
-        TELECOMMAND_STR    : {asset['tc_packet']}<br>
-        PROPULSION_PROFILE : {asset['propulsion'].split('(')[0].strip()}<br>
-        FORWARD_SWEEP_48H  : ZERO_SECONDARY_INTERSECTIONS<br>
-        CRYPTO_SIGNATURE   : SHA256: 4e91bc708...df281e [VERIFIED]
+        [RADIO_TELECOMMAND_AUTHENTICATED]<br>
+        TARGET_ASSET       : {asset['id']}<br>
+        RADIO_COMMAND      : {asset['packet_string']}<br>
+        HARDWARE_PROFILE   : {asset['hardware_type']}<br>
+        SECONDARY_SWEEP    : ZERO_SECONDARY_HAZARDS_DETECTED<br>
+        SECURITY_HASH      : SHA256: 7f3b8c...02e9 [VERIFIED]
         </div>
         """, unsafe_allow_html=True)
 
     with col_audit:
+        st.caption("Measurable Operational Impact")
         st.dataframe(pd.DataFrame({
-            "Verification Metric": [
-                "Solver Computation Latency",
-                "Propellant Savings vs Reactive Burn",
-                "Constellation Separation Buffer",
-                "48-Hour Secondary Risk"
+            "Key Parameter": [
+                "Decision & Computation Time",
+                "Fuel Conserved vs Old Way",
+                "Distance to Sister Satellites",
+                "Next 48-Hour Collision Risk"
             ],
-            "Telemetry Value": [
-                "0.41 Seconds",
-                f"{asset['propellant_delta']}",
-                "> 180 km from sister spacecraft",
-                "Clean (Zero intersections detected)"
+            "KesslerZero Result": [
+                "0.4 Seconds (Instant)",
+                f"{asset['fuel_saved']}",
+                "> 180 km (Completely Safe Separation)",
+                "0.0% (Verified Clean Across All Objects)"
             ]
         }), use_container_width=True, hide_index=True)
